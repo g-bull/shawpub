@@ -1,0 +1,26 @@
+@charset "utf-8";
+@namespace epub "http://www.idpf.org/2007/ops";
+
+@font-face {
+    font-family: "DoolittleGaramond";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/DoolittleGaramond-Regular.otf");
+}
+
+@font-face {
+    font-family: "DoolittleGaramond";
+    font-style: italic;
+    font-weight: normal;
+    src: url("../fonts/DoolittleGaramond-Italic.otf");
+}
+
+
+.sentence-space {
+    padding-right: 0.25em; /* Adjust this value for wider or narrower spacing between sentences*/
+}
+
+
+body{
+  font-family: "DoolittleGaramond", serif;
+}
