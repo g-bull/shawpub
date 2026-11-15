@@ -60,6 +60,19 @@ pub struct Metadata {
 
 impl Config {
 
+    fn make_relative_file(file1: &String, file2: &String) -> String {
+
+        let file1_path = Path::new(file1);
+        let file2_path = Path::new(file2);
+
+        if file2_path.is_relative() {
+            let parent = file1_path.parent().unwrap();
+            let temp = &parent.join(file2_path);
+            return temp.to_str().unwrap().to_string();
+        }
+        return file2.clone();
+    }
+
     pub fn load(config_filename: &String) -> Result<Self, Box<dyn std::error::Error>> {
 
         let toml_data = match fs::read_to_string(config_filename) {
@@ -90,36 +103,59 @@ impl Config {
             output_unknown_words_file: Option<String>
             copy_data: Option<String>
         */
-        let config_path = Path::new(&config_filename);
-        let input_filename = config.input_filename.clone();
-        let input_path = Path::new(&input_filename);
-        println!("{} -> {}", config_filename,
-            config_path.parent().unwrap().display());
-        if input_path.is_relative() {
-            let parent = config_path.parent().unwrap();
-            let temp = input_path;
-            let temp2 = &parent.join(temp);
-            println!("HERE  ---{}---", temp2.display());
-            //input_path = temp2;
-            result.input_filename = temp2.to_str().unwrap().to_string();
-        }
-        println!("{} -> {}", result.input_filename,
-            input_path.display());
+        result.input_filename = Self::make_relative_file(
+            &config_filename, &config.input_filename
+        );
+        result.output_dir = Self::make_relative_file(
+            &config_filename, &config.output_dir
+        );
+        match config.words_filenames {
+            Some(items) => {
 
-        Ok(config)
-    }
+                let mut filenames = Vec::<String>::new();
+                for item in items {
+                    filenames.push(Self::make_relative_file(
+                    &config_filename, &item));
+                }
+            result.words_filenames = Some(filenames);
 
-    fn make_relative_file(file1: &String, file2: &String) -> String {
+            },
+            _ => {},
+        };
+        match config.phrases_filenames {
+            Some(items) => {
 
-        let file1_path = Path::new(file1);
-        let file2_path = Path::new(file2);
+                let mut filenames = Vec::<String>::new();
+                for item in items {
+                    filenames.push(Self::make_relative_file(
+                    &config_filename, &item));
+                }
+            result.phrases_filenames = Some(filenames);
 
-        if file2_path.is_relative() {
-            let parent = file1_path.parent().unwrap();
-            let temp = &parent.join(file2_path);
-            return temp.to_str().unwrap().to_string();
-        }
-        return file2.clone();
+            },
+            _ => {},
+        };
+        match config.output_unknown_words_file {
+            Some(item) => {
+
+                result.output_unknown_words_file = Some(
+                    Self::make_relative_file(
+                        &config_filename, &item));
+                }
+            _ => {},
+        };
+        match config.copy_data {
+            Some(item) => {
+
+                result.copy_data = Some(
+                    Self::make_relative_file(
+                        &config_filename, &item));
+                }
+            _ => {},
+        };
+        println!("{:#?}", result);
+
+        Ok(result)
     }
 
 }
