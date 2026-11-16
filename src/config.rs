@@ -6,12 +6,10 @@ use serde::Deserialize;
 use std::fs;
 use std::io::ErrorKind;
 use std::path::Path;
-use std::ffi::OsStr;
 
 
 use pub_fields::pub_fields;
 
-const BASE_PHRASES_FILENAME: &str = "./data/readlex/static/readlex_converter_phrases.json";
 const XML_LANG: &str = "en-Shaw"; // sets xml-lang and dc:language
 
 #[derive(Debug, Clone)]
@@ -153,7 +151,7 @@ impl Config {
                 }
             _ => {},
         };
-        println!("{:#?}", result);
+        //println!("{:#?}", result);
 
         Ok(result)
     }
