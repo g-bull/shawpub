@@ -5,9 +5,9 @@ use quick_xml::de::from_str;
 use quick_xml::se::Serializer;
 use serde::{Deserialize, Serialize};
 
-use super::Manifest;
-use super::Metadata;
-use super::Spine;
+use super::manifest::Manifest;
+use super::metadata::Metadata;
+use super::spine::Spine;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename = "package")]

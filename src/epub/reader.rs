@@ -25,15 +25,22 @@ impl Reader {
     pub fn new(filename: &String) -> Result<Self, &'static str> {
 
 
-    let file = std::fs::File::open(filename)
-        .map_err(|_| "File open failed.")?;
-    let mut archive = ZipIterable::try_new(file, zip::read::Config::default())
-        .map_err(|_| "Error opening archive.")?;
+        let file = std::fs::File::open(filename)
+            .map_err(|_| "File open failed.")?;
+        let mut archive = ZipIterable::try_new(file, zip::read::Config::default())
+            .map_err(|_| "Error opening archive.")?;
+        /*
+        for entry in archive.files().unwrap() {
+            let entry = entry.unwrap();
+            //println!("{:>20}  {}", entry.size(), entry.name().unwrap());
+        }
+        */
+        let (opf_path, mut package) 
+        = super::container::read_opf_from_epub(filename).unwrap();
 
-    for entry in archive.files().unwrap() {
-        let entry = entry.unwrap();
-        //println!("{:>20}  {}", entry.size(), entry.name().unwrap());
-    }
+        println!("Found OPF at: {}", opf_path);
+        println!("Title: {:?}", package.metadata.titles.first());
+
 
         Ok(Self {
             filename: filename.clone(),

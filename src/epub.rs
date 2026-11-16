@@ -7,15 +7,15 @@ pub use crate::epub::reader::Reader;
 
 pub mod container;
 
-pub mod metadata;
-pub use crate::epub::metadata::Metadata;
+mod metadata;
+//pub use crate::epub::metadata::Metadata;
 
-pub mod manifest;
-pub use crate::epub::manifest::Manifest;
+mod manifest;
+//pub use crate::epub::manifest::Manifest;
 
 pub mod package;
 pub use crate::epub::package::Package;
 
-pub mod spine;
-pub use crate::epub::spine::Spine;
+mod spine;
+//pub use crate::epub::spine::Spine;
 

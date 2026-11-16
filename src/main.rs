@@ -61,6 +61,7 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
         };
     }
     //println!("{:#?}", );
+/*
     use zip;
     use zip::unstable::read::ZipIterable;
 
@@ -73,14 +74,14 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
         //println!("{:>20}  {}", entry.size(), entry.name()?);
     }
 
-    //let archive = epub::Reader::new(&cfg.input_filename);
 
     let (opf_path, mut package) 
         = epub::container::read_opf_from_epub(&cfg.input_filename)?;
 
     println!("Found OPF at: {}", opf_path);
     println!("Title: {:?}", package.metadata.titles.first());
-
+*/
+    let archive = epub::Reader::new(&cfg.input_filename);
 
     Ok(())
    
