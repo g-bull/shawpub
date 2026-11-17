@@ -8,6 +8,7 @@ use config::Config;
 
 use config::words;
 mod epub;
+mod shaw;
 
 fn main()  -> Result<(), Box<dyn std::error::Error>>  {
 
@@ -66,7 +67,7 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
 
     let items = epub_package.manifest.items;
     for item in items {
-        println!("{:#?}", item);
+        //println!("{:#?}", item);
         if item.media_type == "application/xhtml+xml" {
             let Some(bytes) = epub_reader.get_data(item.id) else {
                
@@ -74,7 +75,9 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
                 std::process::exit(1);
             };
             let content = String::from_utf8(bytes.clone())?;
-            println!("{}", content);
+            //println!("{}", content);
+            let text = shaw::html2shaw(&content);
+            println!("{}", text);
             break;
         }
     }
