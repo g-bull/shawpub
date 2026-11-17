@@ -6,7 +6,7 @@ use std::env;
 mod config;
 use config::Config;
 
-mod words;
+use config::words;
 mod epub;
 
 fn main()  -> Result<(), Box<dyn std::error::Error>>  {
@@ -36,7 +36,7 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
         } 
     };
     //println!("{:#?}", cfg);
-    let mut dict = match words::load_default() {
+    let mut dict = match config::words::load_default() {
         Ok(words_map) => words_map,
         _ => {
             eprintln!("Failed to load words from default dictionary.");
@@ -50,7 +50,7 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
     for extra_words_filename in &extra_words_filenames {
         println!("{:#?}", extra_words_filename);
 
-        let extra_words = match words::load(extra_words_filename) {
+        let extra_words = match config::words::load(extra_words_filename) {
             Ok(words_map) => {
                 dict.extend(words_map);
             }

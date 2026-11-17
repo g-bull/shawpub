@@ -10,7 +10,7 @@ use std::io::ErrorKind;
 
 use pub_fields::pub_fields;
 
-const BASE_WORDS: &[u8] = include_bytes!("../data/readlex/readlex_converter.json");
+const BASE_WORDS: &[u8] = include_bytes!("../../data/readlex/readlex_converter.json");
 
 #[derive(Debug, Clone)]
 #[derive(Deserialize)]
