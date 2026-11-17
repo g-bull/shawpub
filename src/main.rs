@@ -9,6 +9,8 @@ use config::Config;
 use config::words;
 mod epub;
 mod shaw;
+mod transliterator;
+use transliterator::Transliterator;
 
 fn main()  -> Result<(), Box<dyn std::error::Error>>  {
 
@@ -65,6 +67,8 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
     let epub_reader = epub::Reader::new(&cfg.input_filename)?;
     let epub_package = epub_reader.get_package();
 
+    let trans = Transliterator::new();
+
     let items = epub_package.manifest.items;
     for item in items {
         //println!("{:#?}", item);
@@ -76,7 +80,7 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
             };
             let content = String::from_utf8(bytes.clone())?;
             //println!("{}", content);
-            let text = shaw::html2shaw(&content);
+            let text = shaw::html2shaw(&content, trans);
             println!("{}", text);
             break;
         }

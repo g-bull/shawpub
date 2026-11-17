@@ -4,11 +4,10 @@
 use ego_tree::iter::Edge;
 use scraper::{Html, Node, Selector};
 
-fn transliterate(text : String)  -> String {
-    text.to_uppercase()
-}
+use crate::transliterator::Transliterator;
 
-pub fn html2shaw(xhtml_content : &String)  -> String {
+
+pub fn html2shaw(xhtml_content : &String, trans: Transliterator)  -> String {
     let mut document = Html::parse_document(xhtml_content);
     let skip_tags = ["script", "style", "meta", "head", "title"];
 
@@ -48,7 +47,7 @@ pub fn html2shaw(xhtml_content : &String)  -> String {
         if let Some(mut node) = document.tree.get_mut(id) {
             if let Node::Text(text) = node.value() {
                 // `text.text` is a `tendril::StrTendril`, which converts from `String`
-                text.text = transliterate(text.text.to_string()).into();
+                text.text = trans.transliterate(text.text.to_string()).into();
             }
         }
     }
