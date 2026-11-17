@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2026 Geoff Bull
 // SPDX-License-Identifier: MIT
 
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
+
 use zip;
 use zip::ZipArchive;
 use std::fs;
@@ -14,8 +18,8 @@ use super::Package;
 pub struct Reader {
 
     filename: String,
-    //root_path: String,
-    //root_dir: String,
+    opf_path: String,
+    root_dir: String,
     package: Package,
     data: HashMap<String, Vec<u8>>,
 
@@ -24,42 +28,59 @@ pub struct Reader {
 
 impl Reader {
 
-
-    pub fn new(filename: &String) -> Result<Self, &'static str> {
-
-
-        let file = std::fs::File::open(filename)
-            .map_err(|_| "File open failed.")?;
-        let mut archive = ZipIterable::try_new(file, zip::read::Config::default())
-            .map_err(|_| "Error opening archive.")?;
-        /*
-        for entry in archive.files().unwrap() {
-            let entry = entry.unwrap();
-            //println!("{:>20}  {}", entry.size(), entry.name().unwrap());
+    fn get_dir_with_slash(s: &str) -> String {
+        match s.rfind('/') {
+            Some(idx) => s[..=idx].to_string(),
+            None => String::new(),
         }
-        */
+    }
+
+    fn read_file_from_archive
+    (
+        archive: &mut ZipArchive<File>,
+        file_path: &str
+    ) -> Result<Vec<u8>, Box<dyn std::error::Error>> 
+    {
+
+        let mut content_file= archive.by_name(file_path)?;
+
+        let mut content = Vec::<u8>::new();
+        content_file.read_to_end(&mut content)?;
+        Ok(content)
+    }
+
+
+    pub fn new(filename: &String) -> Result<Self, Box<dyn std::error::Error>> {
+
+        let file = std::fs::File::open(filename)?;
+        let mut archive: ZipArchive<File> = ZipArchive::new(file)?;
+
         let (opf_path, mut package) 
-        = super::container::read_opf_from_epub(filename).unwrap();
+        = super::container::read_opf_from_epub(&mut archive)?;
 
         println!("Found OPF at: {}", opf_path);
         println!("Title: {:?}", package.metadata.titles.first());
 
+        let root_dir = Self::get_dir_with_slash(&opf_path);
+
         let mut data = HashMap::<String, Vec<u8>>::new();
-        {
-            for item in &package.manifest.items {
-                println!("ManifestItem: {:?}", item);
-            }
 
+        for item in &package.manifest.items {
+            println!("ManifestItem: {:?}", item);
+            let item_path = format!("{}{}", root_dir, item.href);
+            println!("id: {}, href: {}", item.id, item_path);
+
+            let item_content = 
+                Self::read_file_from_archive(&mut archive, &item_path)?;
+            data.insert(item.id.clone(), item_content);
         }
-
 
         Ok(Self {
             filename: filename.clone(),
-            //root_path: String,
-            //root_dir: String,
+            opf_path: opf_path,
+            root_dir: root_dir,
             package: package,
-            data: HashMap::<String, Vec<u8>>::new()
-    
+            data: data
         })
 
     }

@@ -33,17 +33,16 @@ struct Rootfile {
     media_type: String,
 }
 
-// --- 2. Function to locate and parse the OPF from an EPUB ---
-
-pub fn read_opf_from_epub<P: AsRef<Path>>(
-    epub_path: P,
-) -> Result<(String, Package), Box<dyn std::error::Error>> {
-    let file = File::open(epub_path)?;
-    let mut archive = ZipArchive::new(file)?;
+// Locate and parse the OPF from an EPUB
+pub fn read_opf_from_epub
+(
+    epub: &mut ZipArchive<File>
+) -> Result<(String, Package), Box<dyn std::error::Error>>
+{
 
     // Step A: Read META-INF/container.xml to find the .opf path
     let container_xml = {
-        let mut container_file = archive.by_name("META-INF/container.xml")?;
+        let mut container_file = epub.by_name("META-INF/container.xml")?;
         let mut contents = String::new();
         container_file.read_to_string(&mut contents)?;
         contents
@@ -58,9 +57,9 @@ pub fn read_opf_from_epub<P: AsRef<Path>>(
         .map(|rf| rf.full_path)
         .ok_or("No OEBPS package rootfile found in container.xml")?;
 
-    // Step B: Read and parse the .opf file using the discovered path
+    // Read and parse the .opf file using the discovered path
     let opf_xml = {
-        let mut opf_file = archive.by_name(&opf_path)?;
+        let mut opf_file = epub.by_name(&opf_path)?;
         let mut contents = String::new();
         opf_file.read_to_string(&mut contents)?;
         contents
@@ -71,18 +70,3 @@ pub fn read_opf_from_epub<P: AsRef<Path>>(
     // Return both the internal path (useful when saving back) and the parsed struct
     Ok((opf_path, package))
 }
-/* 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (opf_path, mut package) = read_opf_from_epub("book.epub")?;
-
-    println!("Found OPF at: {}", opf_path);
-    println!("Title: {:?}", package.metadata.titles.first());
-
-    // Modify package here...
-    if let Some(title) = package.metadata.titles.first_mut() {
-        title.value = "New Title".to_string();
-    }
-
-    Ok(())
-}
-    */

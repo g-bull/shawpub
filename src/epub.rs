@@ -5,7 +5,7 @@ pub mod reader;
 
 pub use crate::epub::reader::Reader;
 
-pub mod container;
+mod container;
 
 mod metadata;
 //pub use crate::epub::metadata::Metadata;
