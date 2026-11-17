@@ -49,6 +49,15 @@ impl Reader {
         Ok(content)
     }
 
+    pub fn get_package(&self) -> Package {
+
+        self.package.clone()
+    }
+
+    pub fn get_data(&self, id : String) -> Option<&Vec<u8>> {
+        self.data.get(&id)
+    }
+
 
     pub fn new(filename: &String) -> Result<Self, Box<dyn std::error::Error>> {
 
@@ -58,17 +67,13 @@ impl Reader {
         let (opf_path, mut package) 
         = super::container::read_opf_from_epub(&mut archive)?;
 
-        println!("Found OPF at: {}", opf_path);
-        println!("Title: {:?}", package.metadata.titles.first());
 
         let root_dir = Self::get_dir_with_slash(&opf_path);
 
         let mut data = HashMap::<String, Vec<u8>>::new();
 
         for item in &package.manifest.items {
-            println!("ManifestItem: {:?}", item);
             let item_path = format!("{}{}", root_dir, item.href);
-            println!("id: {}, href: {}", item.id, item_path);
 
             let item_content = 
                 Self::read_file_from_archive(&mut archive, &item_path)?;

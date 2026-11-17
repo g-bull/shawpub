@@ -3,7 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Spine {
     #[serde(rename = "@toc", skip_serializing_if = "Option::is_none")]
     pub toc: Option<String>,
@@ -12,7 +12,7 @@ pub struct Spine {
     pub itemrefs: Vec<ItemRef>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ItemRef {
     #[serde(rename = "@idref")]
     pub idref: String,

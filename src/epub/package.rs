@@ -9,7 +9,7 @@ use super::manifest::Manifest;
 use super::metadata::Metadata;
 use super::spine::Spine;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename = "package")]
 pub struct Package {
     #[serde(rename = "@xmlns")]

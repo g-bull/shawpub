@@ -4,13 +4,13 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Manifest {
     #[serde(rename = "item", default)]
     pub items: Vec<ManifestItem>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ManifestItem {
     #[serde(rename = "@id")]
     pub id: String,

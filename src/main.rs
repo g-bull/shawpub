@@ -61,7 +61,24 @@ fn main()  -> Result<(), Box<dyn std::error::Error>>  {
         };
     }
 
-    let archive = epub::Reader::new(&cfg.input_filename)?;
+    let epub_reader = epub::Reader::new(&cfg.input_filename)?;
+    let epub_package = epub_reader.get_package();
+
+    let items = epub_package.manifest.items;
+    for item in items {
+        println!("{:#?}", item);
+        if item.media_type == "application/xhtml+xml" {
+            let Some(bytes) = epub_reader.get_data(item.id) else {
+               
+                eprintln!("Failed to load content from: {}", item.href);
+                std::process::exit(1);
+            };
+            let content = String::from_utf8(bytes.clone())?;
+            println!("{}", content);
+            break;
+        }
+    }
+
 
     Ok(())
    

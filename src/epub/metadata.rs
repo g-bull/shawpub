@@ -3,7 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Metadata {
     // Capture the Dublin Core namespace declaration on <metadata>
     #[serde(rename = "@xmlns:dc", skip_serializing_if = "Option::is_none")]
@@ -28,7 +28,7 @@ pub struct Metadata {
     pub metas: Vec<Meta>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct DcElement {
     #[serde(rename = "@id", skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -37,7 +37,7 @@ pub struct DcElement {
     pub value: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Meta {
     #[serde(rename = "@property", skip_serializing_if = "Option::is_none")]
     pub property: Option<String>,
