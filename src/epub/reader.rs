@@ -2,25 +2,28 @@
 // SPDX-License-Identifier: MIT
 
 use zip;
-use zip::unstable::read::ZipIterable;
+use zip::ZipArchive;
 use std::fs;
 use std::io::BufReader;
 
+use std::collections::HashMap;
+
+use super::Package;
 
 
 pub struct Reader {
 
     filename: String,
-    //file: std::fs::File,
-    //archive: zip::ZipArchive<R>,
     //root_path: String,
     //root_dir: String,
-    //package: epub::Package,
+    package: Package,
+    data: HashMap<String, Vec<u8>>,
 
 
 }
 
 impl Reader {
+
 
     pub fn new(filename: &String) -> Result<Self, &'static str> {
 
@@ -41,14 +44,21 @@ impl Reader {
         println!("Found OPF at: {}", opf_path);
         println!("Title: {:?}", package.metadata.titles.first());
 
+        let mut data = HashMap::<String, Vec<u8>>::new();
+        {
+            for item in &package.manifest.items {
+                println!("ManifestItem: {:?}", item);
+            }
+
+        }
+
 
         Ok(Self {
             filename: filename.clone(),
-            //file: file,
-            //archive: archive,
             //root_path: String,
             //root_dir: String,
-            //package: epub::Package,
+            package: package,
+            data: HashMap::<String, Vec<u8>>::new()
     
         })
 
